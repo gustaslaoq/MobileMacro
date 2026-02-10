@@ -1,4 +1,4 @@
-# Sols RNG Biome Macro
+# Sols RNG Biome Script
 
 Advanced automation script for the game Sols RNG. It monitors biomes, merchants, and rare events automatically and sends real-time alerts to your Discord.
 
