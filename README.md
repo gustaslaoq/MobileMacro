@@ -43,7 +43,7 @@ PSLink = "https://www.roblox.com/games/15532962292/SOLS-RNG?privateServerLinkCod
 -- TIP: If you want to use more than one, use braces: {"link1", "link2"}
 Webhook = "https://discord.com/api/webhooks/YOUR_WEBHOOK_HERE"
 
--- 3. (Optional) Paste your Discord User ID here to be mentioned in rare events.
+-- 3. (Optional) Paste your Discord User ID here to be mentioned for jester, eden and others.
 -- TIP: To mention multiple people, use braces: {"id1", "id2"}
 DiscordId = ""
 
