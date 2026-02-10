@@ -103,5 +103,5 @@ This script is provided for educational and personal automation purposes. Use re
 
 ---
 
-**Version:** v2.3 HYBRID EDITION
+**Version:** v2.3.1 HYBRID EDITION
 **Developed by:** gustaslaoq
