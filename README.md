@@ -4,15 +4,15 @@ Advanced automation script for the game Sols RNG. It monitors biomes, merchants,
 
 ## ⚡ Features
 
-*   **Smart Hybrid Detection:** The script detects when you are in the normal world or in The Limbo, automatically adjusting the reading method to ensure no rare biome (like Glitched or Cyberspace) goes unnoticed.
+*   **Hybrid Detection:** The script detects when you are in the normal world or in The Limbo, automatically adjusting the reading method to ensure no rare biome (like Glitched or Dreamspace) goes unnoticed.
 *   **In-Game Notifications:** Clean, stacked interface that shows multiple alerts simultaneously without blocking your gameplay.
 *   **Discord Alerts:** Receive detailed information, images, and private server links immediately after something important happens.
-*   **Built-in Anti-AFK:** Optional feature to prevent you from being kicked from the server for inactivity.
-*   **Multi-Webhook Support:** Send alerts to multiple Discord channels at the same time.
+*   **Built-in Anti-AFK:** Optional feature to prevent you from being kicked from the server for inactivity (in mobile you may still need an autoclicker).
+*   **Multi-Webhook Support:** Send embeds to multiple Discord channels at the same time.
 
 ---
 
-## 📋 Quick Script Loader
+## 📋 Script
 
 Copy the code below, fill in the fields, and paste it directly into your executor.
 
@@ -76,7 +76,7 @@ That's it! The script will start, you will see a notification at the top of the 
 ## ❓ Frequently Asked Questions (FAQ)
 
 **Does the game need to be in English?**
-Yes. To ensure the script correctly reads the names of biomes and merchants, your Roblox game must be set to English.
+Yes. To ensure the script correctly reads the names of merchants, and biomes while in limbo, your Roblox game must be set to English.
 
 **Does it detect merchants outside of The Limbo?**
 Yes! The script monitors merchants (Mari and Jester) globally, regardless of whether you are in The Limbo or the normal map.
@@ -93,7 +93,7 @@ Share links often expire or are for single use. To get the permanent Private Ser
 4.  Use this new link in the `PSLink` variable.
 
 **How do I stop the script?**
-Type `/stop` in the game chat. The script will send a session summary to Discord and re-teleport you.
+Type `/stop` in the game chat. The script will send a session summary to Discord and you will rejoin, or just leave the game.
 
 ---
 
