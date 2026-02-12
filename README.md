@@ -104,4 +104,4 @@ This script is provided for educational and personal automation purposes. Use re
 ---
 
 **Version:** v2.3.2 HYBRID EDITION
-**Developed by:** gustaslaoq
+**Developed by:** gustaslaoq (on discord)
