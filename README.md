@@ -124,5 +124,5 @@ This script is provided for educational and personal automation purposes. Use re
 
 ---
 
-**Version:** v2.5 JUSTICE edition
+**Version:** v2.5.1 JUSTICE edition
 **Developed by:** gustaslaoq and dox.__ (on discord)
