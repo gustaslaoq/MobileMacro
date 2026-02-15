@@ -2,18 +2,15 @@
 
 # Sol's RNG Biome Script
 
-Advanced automation script for the game Sols RNG. It monitors biomes, merchants, rare events, and player auras automatically, sending real-time alerts to your Discord.
+Advanced automation script for **Sol's RNG**. It monitors biomes, merchants, rare events, and player auras automatically, sending real-time alerts to your Discord with detailed embeds.
 
 ## ⚡ Features
 
-*   **Intuitive UI Configuration:** No need to edit code or variables manually. The script now features a full User Interface where you can input your Webhook, Private Server Link, and settings with ease. Settings are saved automatically.
-*   **Hybrid Detection:** The script detects when you are in the normal world or in The Limbo, automatically adjusting the reading method to ensure no rare biome (like Glitched or Dreamspace) goes unnoticed.
-*   **Aura Detection:** Automatically detects when you roll an aura and sends the details to Discord.
-*   **Configurable Ping System:** Set a rarity threshold via the UI to receive Discord mentions only for auras that meet a specific rarity requirement.
-*   **In-Game Notifications:** Clean, stacked interface that shows multiple alerts simultaneously without blocking your gameplay.
-*   **Discord Alerts:** Receive detailed information, images, and private server links immediately after something important happens.
-*   **Built-in Anti-AFK:** Toggle this feature directly from the UI to prevent being kicked from the server for inactivity.
-*   **Session Statistics:** Track your progress in real-time with a dedicated "Status" tab showing session duration, biome counts, and merchant encounters.
+*   **Persistent Configuration:** Your settings (Webhook, PSLink, Discord IDs, Toggle states) are automatically saved to a file. You only need to configure it once!
+*   **Granular Ping System:** New dedicated **"Pings"** tab. Instead of always pinging for jester and eden, you can now individually toggle pings for specific biomes (Rainy, Snowy, etc.) and merchants (Mari, Jester, Rin). Rare biomes (Glitched, Dreamspace, Cyberspace) still use `@everyone` by default for maximum security.
+*   **New Aura Detection:** Supports the latest rare auras like **Monarch, Pixelation, Luminosity, Nyctophobia, Equinox, and BREAKTHROUGH** .
+*   **Input Privacy:** The UI automatically shortens your Webhook and Private Server links visually, preventing screen sharing leaks, but keeps the full link saved internally.
+*   **Global Statistics:** Tracks your total biomes found across all sessions and displays them in the "Status" tab.
 
 ---
 
@@ -22,8 +19,8 @@ Advanced automation script for the game Sols RNG. It monitors biomes, merchants,
 Before running the script, ensure your game settings are correct, or the script **will not work**:
 
 1.  **Game Language:** Your Roblox game language must be set to **English**.
-2.  **Notification Settings:** Inside the game, open the settings menu, go to the **Notifications** tab, and ensure **"Global Messages Enabled" is DISABLED** so that the script does not send duplicate messages.
-3.  **Server Message Ignore Rarity:** The script by default will detect only 100k+ auras, but you can configure that inside the UI settings.
+2.  **Notification Settings:** Inside the game settings, ensure **"Global Messages Enabled" is DISABLED** to prevent duplicate logs.
+3.  **Executor Support:** Your executor must support `readfile`, `writefile`, and `isfile` functions to save settings (most modern executors do).
 
 ---
 
@@ -39,61 +36,58 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/gustaslaoq/MobileMacr
 
 ## 🚀 How to Use (Step-by-Step Tutorial)
 
-This script runs on Roblox executors (like Hydrogen, Fluxus, Delta, etc.). Follow the steps below to configure and run it using the new UI:
-
 ### 1. Executing the Script
-
 1.  Open your executor inside Roblox.
 2.  Copy the loader code provided above.
-3.  Paste it into the script area of your executor.
-4.  Click on **Execute** (or Play/Inject).
+3.  Paste and click **Execute**.
 
-### 2. Configuring via UI
+### 2. Configuring via UI (New Rayfield Interface)
 
-Once executed, a window titled **"Biome Script Config"** will appear on your screen. Here is how to set it up:
+Once executed, a window titled **"Slaoq's Biome script - v3.2.1"** will appear.
 
 #### Tab: Main
-*   **Webhook URL:** Paste your Discord Webhook URL in the input box.
-*   **Private Server Link:** Paste your full Private Server Link (PSLink) here.
-    *   *Tip:* Do not use Share Links (`.../share?code=...`), use the permanent link format (`.../privateServerLinkCode=...`).
-*   **Anti-AFK:** Toggle this switch to enable or disable the Anti-AFK feature.
-*   **Start Macro:** Click this button to start the automation.
+*   **Webhook URL:** Paste your Discord Webhook. The UI will shorten it visually for privacy after saving.
+*   **Private Server Link:** Paste your PSLink (`.../privateServerLinkCode=...`).
+*   **Anti-AFK:** Toggle to enable the smart walking anti-AFK.
+*   **Start Macro:** Click to begin automation.
+
+#### Tab: Pings
+*   **Discord IDs to Ping:** Enter your User ID (or multiple separated by commas).
+*   **Biomes:** Toggle specifically which common biomes should ping you (e.g., check "Ping on Rainy" if you want alerts for that).
+*   **Merchants:** Toggle specific alerts for Mari, Jester, or Rin.
+*   **Extra:** Toggle "Ping on Eden" if you want alerts when Eden appears in the Limbo.
+*   *Note:* Rare biomes (Glitched, Dreamspace, Cyberspace) automatically ping `@everyone` regardless of settings.
 
 #### Tab: Extra
-*   **Discord IDs to Ping:** Enter your Discord User ID (or multiple IDs separated by commas) to be mentioned when rare auras are found.
-*   **Ping Threshold:** Set the minimum rarity required to trigger a Discord mention (e.g., set to `999000000` to be pinged for very rare auras).
-*   **Stop Macro & Rejoin:** Use this button to safely stop the script and rejoin the server.
+*   **Ping Threshold:** Set the minimum rarity number to trigger a Discord mention for auras (e.g., `100000000` for 1 in 100m+).
+*   **Stop Macro & Rejoin:** Safely stops the script and rejoins the server.
 
 #### Tab: Status
-*   View real-time statistics including **Status** (Running/Stopped), **Session Time**, **Biome Count**, and **Merchant Count**.
+*   View **Session Time**, **Current Status**, **Session Counts**, and **Total Biomes** found since you started using the script.
 
 ---
 
 ## ❓ Frequently Asked Questions (FAQ)
 
-**Does the game need to be in English?**
-Yes. To ensure the script correctly reads the names of merchants, biomes, and auras, your Roblox game must be set to English.
+**Do I need to configure the script every time?**
+**No.** The script now saves your configuration automatically to a file. Next time you execute it, it will load your Webhook, PSLink, and Ping settings instantly.
 
-**Do I need to edit the script code?**
-**No.** The old method of editing variables inside the code is deprecated. All settings (Webhook, PSLink, IDs) should be changed using the in-game UI. Your settings are saved automatically for future uses.
+**How does the new Ping system work?**
+In the **"Pings"** tab, you have full control. If you only care about "Starfall" and "Mari", simply enable the toggles for those and disable the rest. Rare biomes override this and always alert `@everyone`.
 
-**How does the Aura Ping work?**
-Inside the "Extra" tab of the UI, set the "Ping Threshold".
-*   *Example:* If you set the threshold to `100000000` (100m), and you roll an aura with a rarity of 1 in 50m, you will **not** be pinged. If you roll an aura of 1 in 100,000,000+, you **will** be pinged.
+**What auras does it detect?**
+It detects standard auras based on rarity, plus specific custom detections for: **Monarch, Pixelation, Luminosity, Nyctophobia, Equinox, BREAKTHROUGH, and Matrix : Steampunk**.
 
-**Does it detect merchants outside of The Limbo?**
-Yes! The script monitors merchants (Mari, Jester, Rin) globally, regardless of whether you are in The Limbo or the normal map.
-
-**How do I stop the script?**
-You can type `/stop` in the game chat, or click the "Stop Macro" button inside the UI.
+**Is the code open source?**
+The script logic is closed source to protect integrity, but the loader is provided above for easy use.
 
 ---
 
 ## ⚠️ Disclaimer
 
-This script is provided for educational and personal automation purposes. Use responsibly.
+This script is provided for educational and personal automation purposes. Use at your own risk.
 
 ---
 
-**Version:** v3.0 JUSTICE edition
+**Version:** v3.2.1 JUSTICE edition
 **Developed by:** gustaslaoq and dox.__ (on discord)
