@@ -96,4 +96,4 @@ This script is provided for educational and personal automation purposes. Use re
 ---
 
 **Version:** v3.0 JUSTICE edition
-**Developed by:** gustaslaoq (on discord)
+**Developed by:** gustaslaoq and dox.__ (on discord)
