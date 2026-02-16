@@ -4,7 +4,7 @@
 
 Advanced automation script for **Sol's RNG**. It monitors biomes, merchants, rare events, and player auras automatically, sending real-time alerts to your Discord with detailed embeds.
 
-## ⚡ Features
+## Features
 
 *   **Persistent Configuration:** Your settings (Webhook, PSLink, Discord IDs, Toggle states) are automatically saved to a file. You only need to configure it once!
 *   **Granular Ping System:** New dedicated **"Pings"** tab. Instead of always pinging for jester and eden, you can now individually toggle pings for specific biomes (Rainy, Snowy, etc.) and merchants (Mari, Jester, Rin). Rare biomes (Glitched, Dreamspace, Cyberspace) still use `@everyone` by default for maximum security.
@@ -14,7 +14,7 @@ Advanced automation script for **Sol's RNG**. It monitors biomes, merchants, rar
 
 ---
 
-## ⚠️ Important Requirements
+## Important Requirements
 
 Before running the script, ensure your game settings are correct, or the script **will not work**:
 
@@ -24,7 +24,7 @@ Before running the script, ensure your game settings are correct, or the script 
 
 ---
 
-## 📋 Script
+## Script
 
 Copy the loader code below and paste it directly into your executor. **Do not edit the code.** All configuration is done inside the game UI.
 
@@ -34,7 +34,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/gustaslaoq/MobileMacr
 
 ---
 
-## 🚀 How to Use (Step-by-Step Tutorial)
+## How to Use (Step-by-Step Tutorial)
 
 ### 1. Executing the Script
 1.  Open your executor inside Roblox.
@@ -67,7 +67,7 @@ Once executed, a window titled **"Slaoq's Biome script - v3.2.1"** will appear.
 
 ---
 
-## ❓ Frequently Asked Questions (FAQ)
+## Frequently Asked Questions (FAQ)
 
 **Do I need to configure the script every time?**
 **No.** The script now saves your configuration automatically to a file. Next time you execute it, it will load your Webhook, PSLink, and Ping settings instantly.
@@ -83,7 +83,7 @@ The script logic is closed source to protect integrity, but the loader is provid
 
 ---
 
-## ⚠️ Disclaimer
+## Warning
 
 This script is provided for educational and personal automation purposes. Use at your own risk.
 
