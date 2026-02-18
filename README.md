@@ -90,4 +90,4 @@ This script is provided for educational and personal automation purposes. Use at
 ---
 
 **Version:** v3.2.1 JUSTICE edition
-**Developed by:** gustaslaoq and dox.__ (on discord)
+**Developed by:** gustaslaoq (on discord)
