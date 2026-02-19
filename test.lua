@@ -12,14 +12,15 @@ local function getScreenCoords(elemento)
     local size = elemento.AbsoluteSize
     local inset = GuiService:GetGuiInset()
     
-    -- Calcula o centro baseado na posição visual (Viewport)
+    -- Calcula o centro
     local x_center = pos.X + (size.X / 2)
     local y_center = pos.Y + (size.Y / 2)
     
-    -- COORDENADAS ABSOLUTAS (Com Inset):
-    -- Tanto o SendMouseButtonEvent (PC) quanto o SendTouchEvent (Mobile neste jogo)
-    -- parecem exigir coordenadas absolutas da tela (0 no topo real).
-    local x_abs = x_center
+    -- CORREÇÃO PARA DIFERENTES RESOLUÇÕES/SAFEAREA:
+    -- Soma TANTO o X quanto o Y do inset.
+    -- O inset.X considera o deslocamento lateral causado por notches/câmeras na tela
+    -- ou ajustes de aspect ratio em telas estranhas.
+    local x_abs = x_center + inset.X
     local y_abs = y_center + inset.Y
     
     return math.floor(x_abs), math.floor(y_abs)
@@ -60,7 +61,7 @@ local function clickElement(elemento)
     task.wait(0.2)
 
     if isMobile then
-        -- Tenta Touch nativo com coordenadas absolutas
+        -- Tenta Touch nativo
         local ok, err = pcall(function()
             VirtualInputManager:SendTouchEvent(0, Enum.UserInputState.Begin, x, y, game)
             task.wait(0.15)
@@ -69,8 +70,7 @@ local function clickElement(elemento)
         
         if not ok then
             warn("Touch falhou, usando Fallback Mouse: " .. tostring(err))
-            -- Fallback: Tenta simular mouse (alguns jogos aceitam isso no mobile)
-            -- Importante manter o '0' no final para a escala correta
+            -- Fallback: Tenta simular mouse
             pcall(function()
                 VirtualInputManager:SendMouseButtonEvent(x, y, 0, true, game, 0)
                 task.wait(0.1)
@@ -78,7 +78,7 @@ local function clickElement(elemento)
             end)
         end
     else
-        -- PC: Garante que o último parâmetro '0' está presente (crucial para funcionar)
+        -- PC
         local ok, err = pcall(function()
             VirtualInputManager:SendMouseMoveEvent(x, y, game)
             task.wait(0.05)
