@@ -3,79 +3,61 @@ local Players = game:GetService("Players")
 local GuiService = game:GetService("GuiService")
 local UIS = game:GetService("UserInputService")
 local Player = Players.LocalPlayer
-local Cam = workspace.CurrentCamera
 
 local isMobile = UIS.TouchEnabled and not UIS.MouseEnabled
 
 -- ============================================================
--- DETECÇÃO DE INSET: verifica se a ScreenGui pai ignora inset
--- ============================================================
-local function getParentScreenGui(elemento)
-    local parent = elemento
-    while parent do
-        if parent:IsA("ScreenGui") then
-            return parent
-        end
-        parent = parent.Parent
-    end
-    return nil
-end
-
--- ============================================================
 -- CALCULO DE COORDENADAS
+-- Retorna DUAS coordenadas:
+--   indicatorX/Y = AbsolutePosition puro (para desenhar o indicador visual)
+--   clickX/Y     = AbsolutePosition + inset (para o VirtualInputManager)
+--
+-- Motivo: AbsolutePosition começa APÓS o inset (top bar do Roblox ~58px).
+-- O VIM trabalha em coordenadas reais da tela (começa do pixel 0,0),
+-- então precisamos somar o inset para que o click caia no lugar certo.
+-- O indicador usa IgnoreGuiInset=false, então usa o mesmo sistema do
+-- AbsolutePosition e não precisa de ajuste.
 -- ============================================================
-local function getScreenCoords(elemento)
+local function getCoords(elemento)
     local pos = elemento.AbsolutePosition
     local size = elemento.AbsoluteSize
     local inset = GuiService:GetGuiInset()
 
-    local x_center = pos.X + (size.X / 2)
-    local y_center = pos.Y + (size.Y / 2)
+    -- Centro do elemento em coordenadas GUI (AbsolutePosition)
+    local cx = math.floor(pos.X + (size.X / 2))
+    local cy = math.floor(pos.Y + (size.Y / 2))
 
-    local parentGui = getParentScreenGui(elemento)
-    local ignoresInset = parentGui and parentGui.IgnoreGuiInset or false
-
-    local x_final, y_final
-
-    if ignoresInset then
-        -- GUI começa no pixel (0,0) real da tela.
-        -- O VirtualInputManager usa coordenadas APÓS o inset (top bar ~58px),
-        -- então SUBTRAÍMOS o inset para que o VIM clique no lugar certo.
-        x_final = x_center - inset.X
-        y_final = y_center - inset.Y
-    else
-        -- A GUI já começa após o inset. AbsolutePosition é relativo a isso,
-        -- então somamos o inset para converter para coordenadas reais de tela.
-        x_final = x_center + inset.X
-        y_final = y_center + inset.Y
-    end
+    -- Coordenadas reais para o VIM (soma o inset)
+    local vx = cx + inset.X
+    local vy = cy + inset.Y
 
     print(string.format(
-        "[DEBUG] Elemento: %s | AbsPos: (%.0f, %.0f) | Size: (%.0f, %.0f) | Inset: (%.0f, %.0f) | IgnoreInset: %s | Final: (%.0f, %.0f)",
+        "[DEBUG] %s | AbsPos:(%.0f,%.0f) Size:(%.0f,%.0f) Inset:(%.0f,%.0f) | Indicador:(%d,%d) | VIM:(%d,%d)",
         elemento.Name,
-        pos.X, pos.Y,
-        size.X, size.Y,
+        pos.X, pos.Y, size.X, size.Y,
         inset.X, inset.Y,
-        tostring(ignoresInset),
-        x_final, y_final
+        cx, cy,
+        vx, vy
     ))
 
-    return math.floor(x_final), math.floor(y_final)
+    return cx, cy, vx, vy
 end
 
 -- ============================================================
--- INDICADOR VISUAL (círculo vermelho no ponto clicado)
+-- INDICADOR VISUAL
+-- IgnoreGuiInset=false para bater com o AbsolutePosition dos elementos
 -- ============================================================
-local function mostrarIndicador(x, y)
+local function mostrarIndicador(ix, iy, vx, vy)
     local screenGui = Instance.new("ScreenGui")
     screenGui.Name = "ClickIndicator"
     screenGui.ResetOnSpawn = false
-    screenGui.IgnoreGuiInset = true
+    screenGui.IgnoreGuiInset = false
     screenGui.Parent = game.CoreGui
 
+    -- Círculo vermelho = onde o indicador visual está (AbsolutePosition)
     local circle = Instance.new("Frame")
     circle.Size = UDim2.fromOffset(30, 30)
-    circle.Position = UDim2.fromOffset(x, y)
+    circle.Position = UDim2.fromOffset(ix, iy)
     circle.AnchorPoint = Vector2.new(0.5, 0.5)
     circle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
     circle.BackgroundTransparency = 0.3
@@ -86,21 +68,20 @@ local function mostrarIndicador(x, y)
     corner.CornerRadius = UDim.new(1, 0)
     corner.Parent = circle
 
-    -- Label com coordenadas para debug
     local label = Instance.new("TextLabel")
-    label.Size = UDim2.fromOffset(80, 20)
-    label.Position = UDim2.fromOffset(x + 18, y - 10)
+    label.Size = UDim2.fromOffset(120, 36)
+    label.Position = UDim2.fromOffset(ix + 18, iy - 10)
     label.BackgroundTransparency = 1
     label.TextColor3 = Color3.fromRGB(255, 255, 0)
-    label.TextSize = 12
-    label.Text = string.format("(%d,%d)", x, y)
+    label.TextSize = 11
+    label.Text = string.format("GUI:(%d,%d)\nVIM:(%d,%d)", ix, iy, vx, vy)
     label.Parent = screenGui
 
     return screenGui
 end
 
 -- ============================================================
--- CLICK PRINCIPAL COM FALLBACK EM CAMADAS
+-- CLICK PRINCIPAL
 -- ============================================================
 local function clickElement(elemento)
     if not elemento then
@@ -110,20 +91,20 @@ local function clickElement(elemento)
 
     task.wait(0.1)
 
-    local x, y = getScreenCoords(elemento)
-    print("Clicando:", elemento.Name, "| x:", x, "y:", y, "| mobile:", isMobile)
+    local ix, iy, vx, vy = getCoords(elemento)
+    print("Clicando:", elemento.Name, "| GUI:("..ix..","..iy..") VIM:("..vx..","..vy..") | mobile:", isMobile)
 
-    local indicator = mostrarIndicador(x, y)
+    local indicator = mostrarIndicador(ix, iy, vx, vy)
     task.wait(0.2)
 
     local success = false
 
     if isMobile then
-        -- ESTRATÉGIA 1: Touch nativo
+        -- ESTRATÉGIA 1: Touch nativo com coordenadas VIM
         local ok1 = pcall(function()
-            VirtualInputManager:SendTouchEvent(0, Enum.UserInputState.Begin, x, y, game)
+            VirtualInputManager:SendTouchEvent(0, Enum.UserInputState.Begin, vx, vy, game)
             task.wait(0.15)
-            VirtualInputManager:SendTouchEvent(0, Enum.UserInputState.End, x, y, game)
+            VirtualInputManager:SendTouchEvent(0, Enum.UserInputState.End, vx, vy, game)
         end)
 
         if ok1 then
@@ -134,11 +115,11 @@ local function clickElement(elemento)
 
             -- ESTRATÉGIA 2: Mouse simulado
             local ok2 = pcall(function()
-                VirtualInputManager:SendMouseMoveEvent(x, y, game)
+                VirtualInputManager:SendMouseMoveEvent(vx, vy, game)
                 task.wait(0.05)
-                VirtualInputManager:SendMouseButtonEvent(x, y, 0, true, game, 0)
+                VirtualInputManager:SendMouseButtonEvent(vx, vy, 0, true, game, 0)
                 task.wait(0.1)
-                VirtualInputManager:SendMouseButtonEvent(x, y, 0, false, game, 0)
+                VirtualInputManager:SendMouseButtonEvent(vx, vy, 0, false, game, 0)
             end)
 
             if ok2 then
@@ -165,13 +146,13 @@ local function clickElement(elemento)
             end
         end
     else
-        -- PC: Mouse normal
+        -- PC: Mouse normal com coordenadas VIM
         local ok, err = pcall(function()
-            VirtualInputManager:SendMouseMoveEvent(x, y, game)
+            VirtualInputManager:SendMouseMoveEvent(vx, vy, game)
             task.wait(0.05)
-            VirtualInputManager:SendMouseButtonEvent(x, y, 0, true, game, 0)
+            VirtualInputManager:SendMouseButtonEvent(vx, vy, 0, true, game, 0)
             task.wait(0.1)
-            VirtualInputManager:SendMouseButtonEvent(x, y, 0, false, game, 0)
+            VirtualInputManager:SendMouseButtonEvent(vx, vy, 0, false, game, 0)
         end)
         print("Mouse click PC:", ok, err)
         success = ok
