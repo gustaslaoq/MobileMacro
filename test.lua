@@ -3,61 +3,79 @@ local Players = game:GetService("Players")
 local GuiService = game:GetService("GuiService")
 local UIS = game:GetService("UserInputService")
 local Player = Players.LocalPlayer
+local Cam = workspace.CurrentCamera
 
 local isMobile = UIS.TouchEnabled and not UIS.MouseEnabled
 
 -- ============================================================
--- CALCULO DE COORDENADAS
--- Retorna DUAS coordenadas:
---   indicatorX/Y = AbsolutePosition puro (para desenhar o indicador visual)
---   clickX/Y     = AbsolutePosition + inset (para o VirtualInputManager)
---
--- Motivo: AbsolutePosition começa APÓS o inset (top bar do Roblox ~58px).
--- O VIM trabalha em coordenadas reais da tela (começa do pixel 0,0),
--- então precisamos somar o inset para que o click caia no lugar certo.
--- O indicador usa IgnoreGuiInset=false, então usa o mesmo sistema do
--- AbsolutePosition e não precisa de ajuste.
+-- ESTRATÉGIA DEFINITIVA:
+-- Tanto o indicador quanto o VIM usam coordenadas de viewport (pixel 0,0 real).
+-- Para isso:
+--   1. Pegamos AbsolutePosition (coordenadas lógicas, após inset)
+--   2. Somamos o inset para ter coordenadas reais da tela
+--   3. Aplicamos a escala viewport/logical para converter pra pixels físicos
+--   4. O indicador usa IgnoreGuiInset=true com essas mesmas coordenadas físicas
+--   5. O VIM recebe essas mesmas coordenadas físicas
+-- Resultado: indicador e click vão pro MESMO pixel.
 -- ============================================================
-local function getCoords(elemento)
-    local pos = elemento.AbsolutePosition
-    local size = elemento.AbsoluteSize
-    local inset = GuiService:GetGuiInset()
 
-    -- Centro do elemento em coordenadas GUI (AbsolutePosition)
-    local cx = math.floor(pos.X + (size.X / 2))
-    local cy = math.floor(pos.Y + (size.Y / 2))
+-- Calcula escala uma vez só na inicialização
+local function calcScale()
+    local viewport = Cam.ViewportSize
 
-    -- Coordenadas reais para o VIM (soma o inset)
-    local vx = cx + inset.X
-    local vy = cy + inset.Y
+    -- Cria ScreenGui temporária com IgnoreGuiInset=true para medir o tamanho lógico real
+    local sg = Instance.new("ScreenGui")
+    sg.IgnoreGuiInset = true
+    sg.Parent = game.CoreGui
+    local f = Instance.new("Frame")
+    f.Size = UDim2.fromScale(1, 1)
+    f.Parent = sg
+    local logical = f.AbsoluteSize
+    sg:Destroy()
 
-    print(string.format(
-        "[DEBUG] %s | AbsPos:(%.0f,%.0f) Size:(%.0f,%.0f) Inset:(%.0f,%.0f) | Indicador:(%d,%d) | VIM:(%d,%d)",
-        elemento.Name,
-        pos.X, pos.Y, size.X, size.Y,
-        inset.X, inset.Y,
-        cx, cy,
-        vx, vy
-    ))
+    local sx = viewport.X / logical.X
+    local sy = viewport.Y / logical.Y
 
-    return cx, cy, vx, vy
+    print(string.format("[INIT] Viewport:(%.0f,%.0f) Logical:(%.0f,%.0f) Scale:(%.4f,%.4f)",
+        viewport.X, viewport.Y, logical.X, logical.Y, sx, sy))
+
+    return sx, sy
+end
+
+local SCALE_X, SCALE_Y = calcScale()
+local INSET = GuiService:GetGuiInset()
+
+-- ============================================================
+-- Converte AbsolutePosition para coordenadas físicas do viewport
+-- (o que tanto o indicador IgnoreGuiInset=true quanto o VIM entendem)
+-- ============================================================
+local function toPhysical(ax, ay)
+    -- AbsolutePosition já inclui o inset internamente quando IgnoreGuiInset=false
+    -- Mas para coordenadas físicas reais precisamos somar o inset e escalar
+    local px = math.floor((ax + INSET.X) * SCALE_X)
+    local py = math.floor((ay + INSET.Y) * SCALE_Y)
+    return px, py
 end
 
 -- ============================================================
 -- INDICADOR VISUAL
--- IgnoreGuiInset=false para bater com o AbsolutePosition dos elementos
+-- USA IgnoreGuiInset=true e coordenadas físicas — igual ao VIM
 -- ============================================================
-local function mostrarIndicador(ix, iy, vx, vy)
+local function mostrarIndicador(px, py)
     local screenGui = Instance.new("ScreenGui")
     screenGui.Name = "ClickIndicator"
     screenGui.ResetOnSpawn = false
-    screenGui.IgnoreGuiInset = false
+    screenGui.IgnoreGuiInset = true  -- coordenadas físicas do pixel 0,0
     screenGui.Parent = game.CoreGui
 
-    -- Círculo vermelho = onde o indicador visual está (AbsolutePosition)
+    -- Como o indicador usa IgnoreGuiInset=true mas a posição está em pixels físicos,
+    -- precisamos dividir pela escala para posicionar corretamente em pixels lógicos
+    local lx = px / SCALE_X
+    local ly = py / SCALE_Y
+
     local circle = Instance.new("Frame")
     circle.Size = UDim2.fromOffset(30, 30)
-    circle.Position = UDim2.fromOffset(ix, iy)
+    circle.Position = UDim2.fromOffset(lx, ly)
     circle.AnchorPoint = Vector2.new(0.5, 0.5)
     circle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
     circle.BackgroundTransparency = 0.3
@@ -69,12 +87,12 @@ local function mostrarIndicador(ix, iy, vx, vy)
     corner.Parent = circle
 
     local label = Instance.new("TextLabel")
-    label.Size = UDim2.fromOffset(120, 36)
-    label.Position = UDim2.fromOffset(ix + 18, iy - 10)
+    label.Size = UDim2.fromOffset(100, 20)
+    label.Position = UDim2.fromOffset(lx + 18, ly - 10)
     label.BackgroundTransparency = 1
     label.TextColor3 = Color3.fromRGB(255, 255, 0)
     label.TextSize = 11
-    label.Text = string.format("GUI:(%d,%d)\nVIM:(%d,%d)", ix, iy, vx, vy)
+    label.Text = string.format("(%d,%d)", px, py)
     label.Parent = screenGui
 
     return screenGui
@@ -91,44 +109,48 @@ local function clickElement(elemento)
 
     task.wait(0.1)
 
-    local ix, iy, vx, vy = getCoords(elemento)
-    print("Clicando:", elemento.Name, "| GUI:("..ix..","..iy..") VIM:("..vx..","..vy..") | mobile:", isMobile)
+    local pos  = elemento.AbsolutePosition
+    local size = elemento.AbsoluteSize
+    local cx   = pos.X + (size.X / 2)
+    local cy   = pos.Y + (size.Y / 2)
 
-    local indicator = mostrarIndicador(ix, iy, vx, vy)
+    -- Converte para físico (mesmo sistema do VIM e do indicador)
+    local px, py = toPhysical(cx, cy)
+
+    print(string.format("Clicando: %s | Logico:(%.0f,%.0f) Fisico:(%d,%d) | mobile:%s",
+        elemento.Name, cx, cy, px, py, tostring(isMobile)))
+
+    local indicator = mostrarIndicador(px, py)
     task.wait(0.2)
 
     local success = false
 
     if isMobile then
-        -- ESTRATÉGIA 1: Touch nativo com coordenadas VIM
+        -- ESTRATÉGIA 1: Touch nativo
         local ok1 = pcall(function()
-            VirtualInputManager:SendTouchEvent(0, Enum.UserInputState.Begin, vx, vy, game)
+            VirtualInputManager:SendTouchEvent(0, Enum.UserInputState.Begin, px, py, game)
             task.wait(0.15)
-            VirtualInputManager:SendTouchEvent(0, Enum.UserInputState.End, vx, vy, game)
+            VirtualInputManager:SendTouchEvent(0, Enum.UserInputState.End, px, py, game)
         end)
 
         if ok1 then
-            print("Touch nativo: OK")
+            print("Touch: OK")
             success = true
         else
-            warn("Touch nativo falhou, tentando mouse fallback...")
-
             -- ESTRATÉGIA 2: Mouse simulado
             local ok2 = pcall(function()
-                VirtualInputManager:SendMouseMoveEvent(vx, vy, game)
+                VirtualInputManager:SendMouseMoveEvent(px, py, game)
                 task.wait(0.05)
-                VirtualInputManager:SendMouseButtonEvent(vx, vy, 0, true, game, 0)
+                VirtualInputManager:SendMouseButtonEvent(px, py, 0, true, game, 0)
                 task.wait(0.1)
-                VirtualInputManager:SendMouseButtonEvent(vx, vy, 0, false, game, 0)
+                VirtualInputManager:SendMouseButtonEvent(px, py, 0, false, game, 0)
             end)
 
             if ok2 then
                 print("Mouse fallback: OK")
                 success = true
             else
-                warn("Mouse fallback falhou, tentando Activate direto...")
-
-                -- ESTRATÉGIA 3: Activate direto no botão
+                -- ESTRATÉGIA 3: Activate direto
                 local ok3 = pcall(function()
                     if elemento:IsA("GuiButton") then
                         elemento:Activate()
@@ -141,20 +163,20 @@ local function clickElement(elemento)
                     print("Activate: OK")
                     success = true
                 else
-                    warn("Todas as estratégias falharam para: " .. elemento.Name)
+                    warn("Todas as estratégias falharam: " .. elemento.Name)
                 end
             end
         end
     else
-        -- PC: Mouse normal com coordenadas VIM
+        -- PC
         local ok, err = pcall(function()
-            VirtualInputManager:SendMouseMoveEvent(vx, vy, game)
+            VirtualInputManager:SendMouseMoveEvent(px, py, game)
             task.wait(0.05)
-            VirtualInputManager:SendMouseButtonEvent(vx, vy, 0, true, game, 0)
+            VirtualInputManager:SendMouseButtonEvent(px, py, 0, true, game, 0)
             task.wait(0.1)
-            VirtualInputManager:SendMouseButtonEvent(vx, vy, 0, false, game, 0)
+            VirtualInputManager:SendMouseButtonEvent(px, py, 0, false, game, 0)
         end)
-        print("Mouse click PC:", ok, err)
+        print("Mouse PC:", ok, err)
         success = ok
     end
 
@@ -171,7 +193,7 @@ local function useItem(itemName, searchBox, itemGrid, UseButton, maxRetries)
     maxRetries = maxRetries or 3
 
     for tentativa = 1, maxRetries do
-        print(string.format("Tentativa %d/%d para: %s", tentativa, maxRetries, itemName))
+        print(string.format("Tentativa %d/%d: %s", tentativa, maxRetries, itemName))
 
         searchBox.Text = itemName
         task.wait(1.2)
@@ -183,10 +205,10 @@ local function useItem(itemName, searchBox, itemGrid, UseButton, maxRetries)
             task.wait(0.5)
             clickElement(UseButton)
             task.wait(0.5)
-            print("Item usado com sucesso:", itemName)
+            print("Usado:", itemName)
             return true
         else
-            warn(string.format("'%s' não encontrado no grid (tentativa %d)", itemName, tentativa))
+            warn("Nao encontrado: " .. itemName .. " (tentativa " .. tentativa .. ")")
         end
 
         if tentativa < maxRetries then
@@ -194,7 +216,7 @@ local function useItem(itemName, searchBox, itemGrid, UseButton, maxRetries)
         end
     end
 
-    warn("Falhou após " .. maxRetries .. " tentativas: " .. itemName)
+    warn("Falhou apos " .. maxRetries .. " tentativas: " .. itemName)
     return false
 end
 
@@ -202,10 +224,7 @@ end
 -- MAIN
 -- ============================================================
 local MainUI = Player.PlayerGui:WaitForChild("MainInterface", 10)
-if not MainUI then
-    warn("MainInterface não encontrada!")
-    return
-end
+if not MainUI then warn("MainInterface nao encontrada!") return end
 
 local Inventory = MainUI:WaitForChild("Inventory", 10)
 local UseButton  = Inventory.Index.ItemIndex.UseHolder.UseButton
