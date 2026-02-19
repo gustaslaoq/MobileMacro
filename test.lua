@@ -22,7 +22,7 @@ local function getParentScreenGui(elemento)
 end
 
 -- ============================================================
--- CALCULO DE COORDENADAS COM MÚLTIPLAS ESTRATÉGIAS
+-- CALCULO DE COORDENADAS
 -- ============================================================
 local function getScreenCoords(elemento)
     local pos = elemento.AbsolutePosition
@@ -35,21 +35,17 @@ local function getScreenCoords(elemento)
     local parentGui = getParentScreenGui(elemento)
     local ignoresInset = parentGui and parentGui.IgnoreGuiInset or false
 
-    -- Se a GUI NÃO ignora o inset, o AbsolutePosition já começa abaixo
-    -- do inset (ex: abaixo da top bar). Nesse caso NÃO somamos o inset.
-    -- Se a GUI IGNORA o inset, o AbsolutePosition começa do pixel (0,0)
-    -- real da tela, então SOMAMOS apenas o Y (top bar = 36px geralmente).
-    local x_final = x_center
-    local y_final = y_center
+    local x_final, y_final
 
     if ignoresInset then
-        -- A GUI vai de (0,0) até o fim da tela, sem deslocamento.
-        -- Não soma nada, as coordenadas já são absolutas.
-        x_final = x_center
-        y_final = y_center
+        -- GUI começa no pixel (0,0) real da tela.
+        -- O VirtualInputManager usa coordenadas APÓS o inset (top bar ~58px),
+        -- então SUBTRAÍMOS o inset para que o VIM clique no lugar certo.
+        x_final = x_center - inset.X
+        y_final = y_center - inset.Y
     else
-        -- A GUI começa APÓS o inset. O AbsolutePosition já considera isso,
-        -- então para coordenadas de tela reais, somamos o inset.
+        -- A GUI já começa após o inset. AbsolutePosition é relativo a isso,
+        -- então somamos o inset para converter para coordenadas reais de tela.
         x_final = x_center + inset.X
         y_final = y_center + inset.Y
     end
@@ -74,7 +70,7 @@ local function mostrarIndicador(x, y)
     local screenGui = Instance.new("ScreenGui")
     screenGui.Name = "ClickIndicator"
     screenGui.ResetOnSpawn = false
-    screenGui.IgnoreGuiInset = true -- sempre em coordenadas reais
+    screenGui.IgnoreGuiInset = true
     screenGui.Parent = game.CoreGui
 
     local circle = Instance.new("Frame")
@@ -90,7 +86,7 @@ local function mostrarIndicador(x, y)
     corner.CornerRadius = UDim.new(1, 0)
     corner.Parent = circle
 
-    -- Label com as coordenadas para debug
+    -- Label com coordenadas para debug
     local label = Instance.new("TextLabel")
     label.Size = UDim2.fromOffset(80, 20)
     label.Position = UDim2.fromOffset(x + 18, y - 10)
@@ -136,7 +132,7 @@ local function clickElement(elemento)
         else
             warn("Touch nativo falhou, tentando mouse fallback...")
 
-            -- ESTRATÉGIA 2: Mouse simulado (funciona em alguns mobiles)
+            -- ESTRATÉGIA 2: Mouse simulado
             local ok2 = pcall(function()
                 VirtualInputManager:SendMouseMoveEvent(x, y, game)
                 task.wait(0.05)
@@ -149,11 +145,10 @@ local function clickElement(elemento)
                 print("Mouse fallback: OK")
                 success = true
             else
-                warn("Mouse fallback falhou, tentando FireButton...")
+                warn("Mouse fallback falhou, tentando Activate direto...")
 
-                -- ESTRATÉGIA 3: Disparo direto no botão via FireButton/Activate
+                -- ESTRATÉGIA 3: Activate direto no botão
                 local ok3 = pcall(function()
-                    -- Tenta disparar o evento de ativação diretamente no elemento
                     if elemento:IsA("GuiButton") then
                         elemento:Activate()
                     elseif elemento:FindFirstChildWhichIsA("GuiButton") then
@@ -162,7 +157,7 @@ local function clickElement(elemento)
                 end)
 
                 if ok3 then
-                    print("FireButton/Activate: OK")
+                    print("Activate: OK")
                     success = true
                 else
                     warn("Todas as estratégias falharam para: " .. elemento.Name)
@@ -198,23 +193,17 @@ local function useItem(itemName, searchBox, itemGrid, UseButton, maxRetries)
         print(string.format("Tentativa %d/%d para: %s", tentativa, maxRetries, itemName))
 
         searchBox.Text = itemName
-        task.wait(1.2) -- espera o grid filtrar
+        task.wait(1.2)
 
         local item = itemGrid["Item\n" .. itemName]
 
         if item then
-            local clickedItem = clickElement(item.Button or item)
+            clickElement(item.Button or item)
             task.wait(0.5)
-
-            if clickedItem then
-                local clickedUse = clickElement(UseButton)
-                task.wait(0.5)
-
-                if clickedUse then
-                    print("Item usado com sucesso:", itemName)
-                    return true
-                end
-            end
+            clickElement(UseButton)
+            task.wait(0.5)
+            print("Item usado com sucesso:", itemName)
+            return true
         else
             warn(string.format("'%s' não encontrado no grid (tentativa %d)", itemName, tentativa))
         end
@@ -237,21 +226,19 @@ if not MainUI then
     return
 end
 
-local Inventory      = MainUI:WaitForChild("Inventory", 10)
-local UseButton      = Inventory.Index.ItemIndex.UseHolder.UseButton
-local searchBox      = Inventory.Items.Search.Content
-local itemGrid       = Inventory.Items.ItemGrid.ItemGridScrollingFrame
+local Inventory = MainUI:WaitForChild("Inventory", 10)
+local UseButton  = Inventory.Index.ItemIndex.UseHolder.UseButton
+local searchBox  = Inventory.Items.Search.Content
+local itemGrid   = Inventory.Items.ItemGrid.ItemGridScrollingFrame
 
 print("Iniciando sequencia")
 
 Inventory.Visible = true
 task.wait(1)
 
--- Clica na aba de items
 clickElement(Inventory.Items.ItemsTab)
 task.wait(0.7)
 
--- Usa os itens
 useItem("Strange Controller", searchBox, itemGrid, UseButton)
 searchBox.Text = ""
 task.wait(0.3)
