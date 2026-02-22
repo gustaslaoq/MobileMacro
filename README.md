@@ -2,13 +2,12 @@
 
 # Sol's RNG Biome Script
 
-Advanced automation script for **Sol's RNG**. It monitors biomes, merchants, rare events, and player auras automatically, sending real-time alerts to your Discord with detailed embeds.
+Advanced automation script for **Sol's RNG**. It monitors biomes, merchants, rare events, and auras automatically, sending alerts to your Discord with detailed embeds.
 
 ## Features
 
 *   **Persistent Configuration:** Your settings (Webhook, PSLink, Discord IDs, Toggle states) are automatically saved to a file. You only need to configure it once!
-*   **Granular Ping System:** New dedicated **"Pings"** tab. Instead of always pinging for jester and eden, you can now individually toggle pings for specific biomes (Rainy, Snowy, etc.) and merchants (Mari, Jester, Rin). Rare biomes (Glitched, Dreamspace, Cyberspace) still use `@everyone` by default for maximum security.
-*   **New Aura Detection:** Supports the latest rare auras like **Monarch, Pixelation, Luminosity, Nyctophobia, Equinox, and BREAKTHROUGH** .
+*   **Granular Ping System:** New dedicated **"Pings"** tab. Instead of always pinging for jester and eden, you can now individually toggle pings for specific biomes (Rainy, Snowy, etc.) and merchants (Mari, Jester, Rin). Rare biomes (Glitched, Dreamspace, Cyberspace) still use `@everyone` by default.
 *   **Input Privacy:** The UI automatically shortens your Webhook and Private Server links visually, preventing screen sharing leaks, but keeps the full link saved internally.
 *   **Global Statistics:** Tracks your total biomes found across all sessions and displays them in the "Status" tab.
 
@@ -43,7 +42,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/gustaslaoq/MobileMacr
 
 ### 2. Configuring via UI (New Rayfield Interface)
 
-Once executed, a window titled **"Slaoq's Biome script - v3.2.1"** will appear.
+Once executed, a window titled **"Slaoq's Biome script - v3.3.0"** will appear.
 
 #### Tab: Main
 *   **Webhook URL:** Paste your Discord Webhook. The UI will shorten it visually for privacy after saving.
@@ -59,7 +58,7 @@ Once executed, a window titled **"Slaoq's Biome script - v3.2.1"** will appear.
 *   *Note:* Rare biomes (Glitched, Dreamspace, Cyberspace) automatically ping `@everyone` regardless of settings.
 
 #### Tab: Extra
-*   **Ping Threshold:** Set the minimum rarity number to trigger a Discord mention for auras (e.g., `100000000` for 1 in 100m+).
+*   **Ping Threshold:** Set the minimum rarity number to trigger a Discord mention for auras (e.g., `100000000` for 100m+).
 *   **Stop Macro & Rejoin:** Safely stops the script and rejoins the server.
 
 #### Tab: Status
@@ -83,11 +82,40 @@ The script logic is closed source to protect integrity, but the loader is provid
 
 ---
 
+## Alternative: Headless Version (No UI)
+
+If the main script is not working correctly or conflicts with other scripts (e.g., beeconhub (autofishing script), use this headless version. It has no interface and runs entirely in the background.
+
+### Features
+*   **High Compatibility:** No UI elements, ensuring no conflicts with other custom interfaces.
+*   **Direct Configuration:** Settings are defined directly in the loader code.
+
+### Script (No UI)
+
+Copy the code below into your executor. **You must edit the variables at the top before executing.**
+
+```lua
+PSLink = "";       -- Paste your Private Server Link here
+Webhook = "";      -- Paste your Discord Webhook URL here (supports multiple webhooks separated by commas or spaces)
+DiscordId = "ID1, ID2, ID3";    -- Paste your Discord User ID here (for eden, jester and rin)
+Antiafk = false     -- Set to true to enable Anti-AFK, false to disable (may not work on some devices)
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/gustaslaoq/MobileMacro/refs/heads/main/androidnoui.lua", true))()
+```
+
+### Configuration Guide
+1.  **PSLink:** Paste your Roblox Private Server link between the quotes.
+2.  **Webhook:** Paste your Discord Webhook URL. The script automatically detects multiple webhooks if you paste more than one.
+3.  **DiscordId:** Enter your Discord User ID if you want to be pinged for specific events.
+4.  **Antiafk:** Keep as `true` to prevent being kicked for inactivity.
+
+---
+
 ## Warning
 
 This script is provided for educational and personal automation purposes. Use at your own risk.
 
 ---
 
-**Version:** v3.2.1 JUSTICE edition
+**Version:** v3.3.0
 **Developed by:** gustaslaoq (on discord)
