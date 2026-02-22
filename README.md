@@ -117,5 +117,5 @@ This script is provided for educational and personal automation purposes. Use at
 
 ---
 
-**Version:** v3.3.0
+**Version:** v3.3.1
 **Developed by:** gustaslaoq (on discord)
