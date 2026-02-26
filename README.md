@@ -42,7 +42,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/gustaslaoq/MobileMacr
 
 ### 2. Configuring via UI (New Rayfield Interface)
 
-Once executed, a window titled **"Slaoq's Biome script - v3.3.0"** will appear.
+Once executed, a window titled **"Slaoq's Biome script - v3.3.1"** will appear.
 
 #### Tab: Main
 *   **Webhook URL:** Paste your Discord Webhook. The UI will shorten it visually for privacy after saving.
