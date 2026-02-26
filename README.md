@@ -40,26 +40,26 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/gustaslaoq/MobileMacr
 2.  Copy the loader code provided above.
 3.  Paste and click **Execute**.
 
-### 2. Configuring via UI (New Rayfield Interface)
+### 2. Configuring in the UI
 
 Once executed, a window titled **"Slaoq's Biome script - v3.3.1"** will appear.
 
 #### Tab: Main
 *   **Webhook URL:** Paste your Discord Webhook. The UI will shorten it visually for privacy after saving.
 *   **Private Server Link:** Paste your PSLink (`.../privateServerLinkCode=...`).
-*   **Anti-AFK:** Toggle to enable the smart walking anti-AFK.
-*   **Start Macro:** Click to begin automation.
+*   **Anti-AFK:** Toggle to enable the smart anti-AFK. (it may not work in your device)
+*   **Start Macro:** Click to begin detection.
 
 #### Tab: Pings
 *   **Discord IDs to Ping:** Enter your User ID (or multiple separated by commas).
-*   **Biomes:** Toggle specifically which common biomes should ping you (e.g., check "Ping on Rainy" if you want alerts for that).
-*   **Merchants:** Toggle specific alerts for Mari, Jester, or Rin.
+*   **Biomes:** Toggle specifically which common biomes should ping you (e.g., turn on "Ping on Rainy" if you want pings for that).
+*   **Merchants:** Toggle ping for Mari, Jester, or Rin.
 *   **Extra:** Toggle "Ping on Eden" if you want alerts when Eden appears in the Limbo.
 *   *Note:* Rare biomes (Glitched, Dreamspace, Cyberspace) automatically ping `@everyone` regardless of settings.
 
 #### Tab: Extra
 *   **Ping Threshold:** Set the minimum rarity number to trigger a Discord mention for auras (e.g., `100000000` for 100m+).
-*   **Stop Macro & Rejoin:** Safely stops the script and rejoins the server.
+*   **Stop Macro & Rejoin:** Safely stops the script and rejoins the server. (you may enter in a ghost server, this is mainly for testing)
 
 #### Tab: Status
 *   View **Session Time**, **Current Status**, **Session Counts**, and **Total Biomes** found since you started using the script.
@@ -69,13 +69,13 @@ Once executed, a window titled **"Slaoq's Biome script - v3.3.1"** will appear.
 ## Frequently Asked Questions (FAQ)
 
 **Do I need to configure the script every time?**
-**No.** The script now saves your configuration automatically to a file. Next time you execute it, it will load your Webhook, PSLink, and Ping settings instantly.
+**No.** The script now saves your configuration automatically to a file. Next time you execute it, it will load your Webhook, PSLink, and Pings settings instantly.
 
 **How does the new Ping system work?**
 In the **"Pings"** tab, you have full control. If you only care about "Starfall" and "Mari", simply enable the toggles for those and disable the rest. Rare biomes override this and always alert `@everyone`.
 
 **What auras does it detect?**
-It detects standard auras based on rarity, plus specific custom detections for: **Monarch, Pixelation, Luminosity, Nyctophobia, Equinox, BREAKTHROUGH, and Matrix : Steampunk**.
+It detects standard auras based on rarity, plus specific custom detections for: **Monarch, Pixelation, Luminosity, Nyctophobia, Equinox, BREAKTHROUGH (new 1b+ detection may not work)**.
 
 **Is the code open source?**
 The script logic is closed source to protect integrity, but the loader is provided above for easy use.
