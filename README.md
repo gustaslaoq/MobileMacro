@@ -1,31 +1,41 @@
-***
+# Sol's RNG Biome Script – Advanced Automation
 
-# Sol's RNG Biome Script
+A powerful, configurable automation tool for **Sol's RNG**.  
+Monitors biomes, merchants, rare events, and auras, and sends real‑time alerts to your Discord with rich embed notifications.
 
-Advanced automation script for **Sol's RNG**. It monitors biomes, merchants, rare events, and auras automatically, sending alerts to your Discord with detailed embeds.
-
-## Features
-
-*   **Persistent Configuration:** Your settings (Webhook, PSLink, Discord IDs, Toggle states) are automatically saved to a file. You only need to configure it once!
-*   **Granular Ping System:** New dedicated **"Pings"** tab. Instead of always pinging for jester and eden, you can now individually toggle pings for specific biomes (Rainy, Snowy, etc.) and merchants (Mari, Jester, Rin). Rare biomes (Glitched, Dreamspace, Cyberspace) still use `@everyone` by default.
-*   **Input Privacy:** The UI automatically shortens your Webhook and Private Server links visually, preventing screen sharing leaks, but keeps the full link saved internally.
-*   **Global Statistics:** Tracks your total biomes found across all sessions and displays them in the "Status" tab.
+> **Version:** v3.3.2  
+> **Developed by:** gustaslaoq (Discord)
 
 ---
 
-## Important Requirements
+## ✨ Features
 
-Before running the script, ensure your game settings are correct, or the script **will not work**:
-
-1.  **Game Language:** Your Roblox game language must be set to **English**.
-2.  **Notification Settings:** Inside the game settings, ensure **"Global Messages Enabled" is DISABLED** to prevent duplicate logs.
-3.  **Executor Support:** Your executor must support `readfile`, `writefile`, and `isfile` functions to save settings (most modern executors do).
+- **Persistent Configuration** – All your settings (webhook, private server link, Discord IDs, ping toggles) are automatically saved to a file. Set it up **once** and forget it.
+- **Granular Ping System** – A dedicated **Pings** tab lets you individually enable/disable pings for:
+  - Common biomes (Rainy, Snowy, Sand Storm, Windy, Starfall, Hell, Heaven, Null, Aurora, Corruption)
+  - Merchants (Mari, Jester, Rin)
+  - Eden (appears in The Limbo)
+  
+  Rare biomes (Glitched, Dreamspace, Cyberspace) always use `@everyone` by default – no extra config needed.
+- **Global Statistics** – Tracks total biomes found across all sessions and displays them in the **Status** tab, so you can see your lifetime progress.
+- **Anti‑AFK** – Optional smart movement simulation to prevent being kicked for inactivity (may not work on all devices).
+- **Aura Detection** – Recognises rare auras including **Monarch, Pixelation, Luminosity, Nyctophobia, Equinox, BREAKTHROUGH** and more, with custom Discord embeds.
 
 ---
 
-## Script
+## 📋 Important Requirements
 
-Copy the loader code below and paste it directly into your executor. **Do not edit the code.** All configuration is done inside the game UI.
+Before running the script, ensure your game settings are correct **Or some features may not work**:
+
+1. **Game Language** – Must be set to **English** inside Roblox.
+2. **Notification Settings** – In the game’s settings, **disable** “Global Messages Enabled” to avoid duplicate logs.
+3. **Executor Compatibility** – Your executor must support `readfile`, `writefile`, and `isfile` (most modern executors do). This is required for configuration saving.
+
+---
+
+## 🚀 Script
+
+Copy the loader code below and paste it directly into your executor. **Do not edit this code** – all configuration is done inside the game UI after execution.
 
 ```lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/gustaslaoq/MobileMacro/refs/heads/main/android.lua", true))()
@@ -33,62 +43,70 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/gustaslaoq/MobileMacr
 
 ---
 
-## How to Use (Step-by-Step Tutorial)
+## 📖 How to Use (Step‑by‑Step Tutorial)
 
-### 1. Executing the Script
-1.  Open your executor inside Roblox.
-2.  Copy the loader code provided above.
-3.  Paste and click **Execute**.
+### 1. Execute the Script
+- Open your executor inside Roblox.
+- Copy the loader code above and paste it into the executor.
+- Click **Execute**. A UI window titled **“Slaoq's Biome script – v3.3.2”** will appear.
 
-### 2. Configuring in the UI
+### 2. Configure the UI
 
-Once executed, a window titled **"Slaoq's Biome script - v3.3.1"** will appear.
+The UI is divided into four tabs. Configure each according to your preferences.
 
-#### Tab: Main
-*   **Webhook URL:** Paste your Discord Webhook. The UI will shorten it visually for privacy after saving.
-*   **Private Server Link:** Paste your PSLink (`.../privateServerLinkCode=...`).
-*   **Anti-AFK:** Toggle to enable the smart anti-AFK. (it may not work in your device)
-*   **Start Macro:** Click to begin detection.
+#### 🔹 **Main Tab**
+| Field / Button | Description |
+|----------------|-------------|
+| **Webhook URL** | Paste your Discord webhook URL. After saving, it will be visually shortened for privacy. |
+| **Private Server Link** | Paste your permanent private server link (the one containing `.../privateServerLinkCode=...`). |
+| **Anti‑AFK** | Toggle to enable/disable the anti‑AFK feature. |
+| **Start Macro** | Click to begin biome detection. The button changes to **Stop Macro** while running. |
 
-#### Tab: Pings
-*   **Discord IDs to Ping:** Enter your User ID (or multiple separated by commas).
-*   **Biomes:** Toggle specifically which common biomes should ping you (e.g., turn on "Ping on Rainy" if you want pings for that).
-*   **Merchants:** Toggle ping for Mari, Jester, or Rin.
-*   **Extra:** Toggle "Ping on Eden" if you want alerts when Eden appears in the Limbo.
-*   *Note:* Rare biomes (Glitched, Dreamspace, Cyberspace) automatically ping `@everyone` regardless of settings.
+#### 🔹 **Pings Tab**
+- **Discord IDs to Ping** – Enter one or more Discord user IDs (numbers only, comma‑separated). These will be pinged for the events you toggle below.
+- **Biomes** – Enable or disable pings for each common biome individually.
+- **Merchants** – Toggle pings for Mari, Jester, and Rin.
+- **Extra** – Toggle “Ping on Eden” to receive alerts when Eden appears in The Limbo.
 
-#### Tab: Extra
-*   **Ping Threshold:** Set the minimum rarity number to trigger a Discord mention for auras (e.g., `100000000` for 100m+).
-*   **Stop Macro & Rejoin:** Safely stops the script and rejoins the server. (you may enter in a ghost server, this is mainly for testing)
+> **Note:** Rare biomes (Glitched, Dreamspace, Cyberspace) always ping `@everyone` regardless of these settings.
 
-#### Tab: Status
-*   View **Session Time**, **Current Status**, **Session Counts**, and **Total Biomes** found since you started using the script.
+#### 🔹 **Extra Tab**
+- **Ping Threshold (Aura Rarity)** – Set a minimum rarity number (e.g., `100000000` for 100M+) to trigger a Discord mention when a rare aura is rolled.
+- **Stop Macro & Rejoin** – Safely stops the macro and rejoins the current server. Useful for testing or resetting.
 
----
-
-## Frequently Asked Questions (FAQ)
-
-**Do I need to configure the script every time?**
-**No.** The script now saves your configuration automatically to a file. Next time you execute it, it will load your Webhook, PSLink, and Pings settings instantly.
-
-**How does the new Ping system work?**
-In the **"Pings"** tab, you have full control. If you only care about "Starfall" and "Mari", simply enable the toggles for those and disable the rest. Rare biomes override this and always alert `@everyone`.
-
-**What auras does it detect?**
-It detects standard auras based on rarity, plus specific custom detections for: **Monarch, Pixelation, Luminosity, Nyctophobia, Equinox, BREAKTHROUGH (new 1b+ detection may not work)**.
-
-**Is the code open source?**
-The script logic is closed source to protect integrity, but the loader is provided above for easy use.
+#### 🔹 **Status Tab**
+- Displays real‑time information about the current session:
+  - Session time
+  - Current status (Running / Stopped)
+  - Session biome count and merchant count
+  - Last detected biome and time ago
+- Also shows **global statistics** (total biomes found since you started using the script), broken down by biome type with last seen timestamps.
 
 ---
 
-## Alternative: Headless Version (No UI)
+## ❓ Frequently Asked Questions
 
-If the main script is not working correctly or conflicts with other scripts (e.g., beeconhub (autofishing script), use this headless version. It has no interface and runs entirely in the background.
+**Q: Do I need to configure the script every time I run it?**  
+**A:** No. Your configuration is automatically saved to a file. Next time you execute the script, all your settings (webhook, PS link, ping preferences, etc.) will be loaded instantly.
+
+**Q: How does the ping system work?**  
+**A:** In the **Pings** tab you have full control. If you only care about “Heaven” and “Jester”, simply enable those toggles and disable the rest. Rare biomes (Glitched, Dreamspace, Cyberspace) override the toggles and always ping `@everyone`.
+
+**Q: What auras does the script detect?**  
+**A:** It detects standard auras based on rarity, plus custom detections for: **Monarch, Pixelation, Luminosity, Nyctophobia, Equinox, BREAKTHROUGH** (the new 1B+ detection may require fine‑tuning).
+
+**Q: Is the script open source?**  
+**A:** The core logic is closed source to protect integrity, but the loader is provided above for easy use.
+
+---
+
+## 🔧 Alternative: Headless Version (No UI)
+
+If the main script conflicts with other UI‑based scripts (e.g., auto‑fishing scripts) or you prefer a minimal background operation, use this headless version.
 
 ### Features
-*   **High Compatibility:** No UI elements, ensuring no conflicts with other custom interfaces.
-*   **Direct Configuration:** Settings are defined directly in the loader code.
+- **High Compatibility** – No UI elements, so it won’t interfere with other custom interfaces.
+- **Direct Configuration** – Settings are defined directly in the loader code.
 
 ### Script (No UI)
 
@@ -96,26 +114,26 @@ Copy the code below into your executor. **You must edit the variables at the top
 
 ```lua
 PSLink = "";       -- Paste your Private Server Link here
-Webhook = "";      -- Paste your Discord Webhook URL here (supports multiple webhooks separated by commas or spaces)
-DiscordId = "ID1, ID2, ID3";    -- Paste your Discord User ID here (for eden, jester and rin)
+Webhook = "";      -- Paste your Discord Webhook URL here (supports multiple URLs separated by commas or spaces)
+DiscordId = "ID1, ID2, ID3";    -- Paste your Discord User IDs here (for Eden, Jester, and Rin pings)
 Antiafk = false     -- Set to true to enable Anti-AFK, false to disable (may not work on some devices)
 
 loadstring(game:HttpGet("https://raw.githubusercontent.com/gustaslaoq/MobileMacro/refs/heads/main/androidnoui.lua", true))()
 ```
 
 ### Configuration Guide
-1.  **PSLink:** Paste your Roblox Private Server link between the quotes.
-2.  **Webhook:** Paste your Discord Webhook URL. The script automatically detects multiple webhooks if you paste more than one.
-3.  **DiscordId:** Enter your Discord User ID if you want to be pinged for specific events.
-4.  **Antiafk:** Keep as `true` to prevent being kicked for inactivity.
+1. **PSLink** – Insert your Roblox private server link between the quotes.
+2. **Webhook** – Insert your Discord webhook URL. The script automatically detects multiple webhooks if you paste more than one.
+3. **DiscordId** – Enter your Discord user ID(s) if you want to be pinged for specific events (Eden, Jester, Rin).
+4. **Antiafk** – Keep as `true` to enable the anti‑AFK feature.
 
 ---
 
-## Warning
+## ⚠️ Warning
 
-This script is provided for educational and personal automation purposes. Use at your own risk.
+This script is provided for **educational and personal automation purposes only**. Use it at your own risk. The developer is not responsible for any consequences arising from its use.
 
 ---
 
-**Version:** v3.3.1
-**Developed by:** gustaslaoq (on discord)
+
+*For bug reports or suggestions, message **gustaslaoq** on Discord.*
