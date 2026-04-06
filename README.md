@@ -3,7 +3,7 @@
 A powerful, configurable automation tool for **Sol's RNG**.  
 Monitors biomes, merchants, rare events, and auras, and sends real‑time alerts to your Discord with rich embed notifications.
 
-> **Version:** v3.3.2  
+> **Version:** v3.4.1  
 > **Developed by:** gustaslaoq (Discord)
 
 ---
@@ -11,13 +11,13 @@ Monitors biomes, merchants, rare events, and auras, and sends real‑time alerts
 ## ✨ Features
 
 - **Persistent Configuration** – All your settings (webhook, private server link, Discord IDs, ping toggles) are automatically saved to a file. Set it up **once** and forget it.
-- **Granular Ping System** – A dedicated **Pings** tab lets you individually enable/disable pings for:
+- **Granular Ping System** – A dedicated **Config** tab lets you individually enable/disable pings for:
   - Common biomes (Rainy, Snowy, Sand Storm, Windy, Starfall, Hell, Heaven, Null, Aurora, Corruption)
   - Merchants (Mari, Jester, Rin)
   - Eden (appears in The Limbo)
   
   Rare biomes (Glitched, Dreamspace, Cyberspace) always use `@everyone` by default – no extra config needed.
-- **Global Statistics** – Tracks total biomes found across all sessions and displays them in the **Status** tab, so you can see your lifetime progress.
+- **Global Statistics** – Tracks total biomes found across all sessions and displays them in the **Biome Counts** tab, so you can see your lifetime progress.
 - **Anti‑AFK** – Optional smart movement simulation to prevent being kicked for inactivity (may not work on all devices).
 - **Aura Detection** – Recognises rare auras including **Monarch, Pixelation, Luminosity, Nyctophobia, Equinox, BREAKTHROUGH** and more, with custom Discord embeds.
 
@@ -28,7 +28,7 @@ Monitors biomes, merchants, rare events, and auras, and sends real‑time alerts
 Before running the script, ensure your game settings are correct **Or some features may not work**:
 
 1. **Game Language** – Must be set to **English** inside Roblox.
-2. **Notification Settings** – In the game’s settings, **disable** “Global Messages Enabled” to avoid duplicate logs.
+2. **Notification Settings** – In the game's settings, **disable** "Global Messages Enabled" to avoid duplicate logs.
 3. **Executor Compatibility** – Your executor must support `readfile`, `writefile`, and `isfile` (most modern executors do). This is required for configuration saving.
 
 ---
@@ -48,7 +48,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/gustaslaoq/MobileMacr
 ### 1. Execute the Script
 - Open your executor inside Roblox.
 - Copy the loader code above and paste it into the executor.
-- Click **Execute**. A UI window titled **“Slaoq's Biome script – v3.3.2”** will appear.
+- Click **Execute**. A UI window titled **"Biome Script"** will appear. Press **K** to show/hide it at any time.
 
 ### 2. Configure the UI
 
@@ -57,30 +57,45 @@ The UI is divided into four tabs. Configure each according to your preferences.
 #### 🔹 **Main Tab**
 | Field / Button | Description |
 |----------------|-------------|
-| **Webhook URL** | Paste your Discord webhook URL. After saving, it will be visually shortened for privacy. |
-| **Private Server Link** | Paste your permanent private server link (the one containing `.../privateServerLinkCode=...`). |
+| **Macro State** | Status badge showing whether the macro is currently running or stopped. |
+| **Start** | Click to begin biome detection. Becomes greyed out while the macro is running. |
+| **Stop** | Click to stop the macro. Greyed out while the macro is not running. |
+| **Discord Webhook URL** | Paste your Discord webhook URL here. Supports multiple webhook URLs. After saving, it will be visually shortened for privacy. |
+| **Test Webhook** | Sends a test message to each configured webhook and notifies you on-screen whether each one is working. Has a 10-second cooldown to avoid spam. |
+| **Private Server Link** | Paste your permanent private server link. After saving, it will be visually shortened. |
 | **Anti‑AFK** | Toggle to enable/disable the anti‑AFK feature. |
-| **Start Macro** | Click to begin biome detection. The button changes to **Stop Macro** while running. |
-
-#### 🔹 **Pings Tab**
-- **Discord IDs to Ping** – Enter one or more Discord user IDs (numbers only, comma‑separated). These will be pinged for the events you toggle below.
-- **Biomes** – Enable or disable pings for each common biome individually.
-- **Merchants** – Toggle pings for Mari, Jester, and Rin.
-- **Extra** – Toggle “Ping on Eden” to receive alerts when Eden appears in The Limbo.
-
-> **Note:** Rare biomes (Glitched, Dreamspace, Cyberspace) always ping `@everyone` regardless of these settings.
-
-#### 🔹 **Extra Tab**
-- **Ping Threshold (Aura Rarity)** – Set a minimum rarity number (e.g., `100000000` for 100M+) to trigger a Discord mention when a rare aura is rolled.
-- **Stop Macro & Rejoin** – Safely stops the macro and rejoins the current server. Useful for testing or resetting.
+| **Stop and Rejoin** | Safely stops the macro and rejoins the current server. |
 
 #### 🔹 **Status Tab**
-- Displays real‑time information about the current session:
-  - Session time
-  - Current status (Running / Stopped)
-  - Session biome count and merchant count
-  - Last detected biome and time ago
-- Also shows **global statistics** (total biomes found since you started using the script), broken down by biome type with last seen timestamps.
+Displays real‑time information about the current macro session:
+
+| Metric | Description |
+|--------|-------------|
+| **Macro State** | Live badge showing Running or Stopped. |
+| **Elapsed Time** | How long the current session has been running (hh:mm:ss). |
+| **Last Biome** | The last biome detected and how long ago it was seen. |
+| **Biomes Detected** | Total biomes found during this session. |
+| **Merchants Found** | Total merchants found during this session. |
+| **Event Log** | A live scrollable console logging all macro events with timestamps. |
+
+#### 🔹 **Biome Counts Tab**
+Shows your **lifetime statistics** across all sessions:
+
+| Metric | Description |
+|--------|-------------|
+| **Total Biomes** | Overall biome count across every session. |
+| **Per Biome** | Individual count and last seen time for each biome type. |
+
+#### 🔹 **Config Tab**
+| Field / Toggle | Description |
+|----------------|-------------|
+| **Discord IDs to Ping** | Enter one or more Discord user IDs (numbers only, comma‑separated). These will be mentioned for the events you enable below. |
+| **Aura Rarity Ping Threshold** | Set a minimum rarity number (e.g. `100000000` for 100M+) to trigger a Discord mention when a rare aura is rolled. |
+| **Biome Pings** | Individual toggles to enable/disable pings for each common biome. |
+| **Merchant Pings** | Individual toggles for Mari, Jester, and Rin. |
+| **Ping on Eden spawn** | Toggle to receive alerts when Eden appears in The Limbo. |
+
+> **Note:** Rare biomes (Glitched, Dreamspace, Cyberspace) always ping `@everyone` regardless of the ping toggles.
 
 ---
 
@@ -90,7 +105,7 @@ The UI is divided into four tabs. Configure each according to your preferences.
 **A:** No. Your configuration is automatically saved to a file. Next time you execute the script, all your settings (webhook, PS link, ping preferences, etc.) will be loaded instantly.
 
 **Q: How does the ping system work?**  
-**A:** In the **Pings** tab you have full control. If you only care about “Heaven” and “Jester”, simply enable those toggles and disable the rest. Rare biomes (Glitched, Dreamspace, Cyberspace) override the toggles and always ping `@everyone`.
+**A:** In the **Config** tab you have full control. If you only care about "Heaven" and "Jester", simply enable those toggles and disable the rest. Rare biomes (Glitched, Dreamspace, Cyberspace) override the toggles and always ping `@everyone`.
 
 **Q: What auras does the script detect?**  
 **A:** It detects standard auras based on rarity, plus custom detections for: **Monarch, Pixelation, Luminosity, Nyctophobia, Equinox, BREAKTHROUGH** (the new 1B+ detection may require fine‑tuning).
@@ -105,7 +120,7 @@ The UI is divided into four tabs. Configure each according to your preferences.
 If the main script conflicts with other UI‑based scripts (e.g., auto‑fishing scripts) or you prefer a minimal background operation, use this headless version.
 
 ### Features
-- **High Compatibility** – No UI elements, so it won’t interfere with other custom interfaces.
+- **High Compatibility** – No UI elements, so it won't interfere with other custom interfaces.
 - **Direct Configuration** – Settings are defined directly in the loader code.
 
 ### Script (No UI)
