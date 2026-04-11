@@ -3,7 +3,7 @@
 A powerful, configurable automation tool for **Sol's RNG**.  
 Monitors biomes, merchants, rare events, and auras, and sends real‑time alerts to your Discord with rich embed notifications.
 
-> **Version:** v3.4.1  
+> **Version:** v3.5
 > **Developed by:** gustaslaoq (Discord)
 
 ---
